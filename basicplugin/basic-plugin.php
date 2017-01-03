@@ -12,16 +12,37 @@
 include funciton files
 */
 //include below not working
-//include( plugin_dir_url(__FILE__) . 'includes/example_widget_two.php' );
+//include( plugin_dir_url(__FILE__).'includes/example_widget_two.php' );
 /*add logo code to wordpress login - this to modify the FORCE LOGIN plugin */
 function my_login_logo() {
     echo '<style type="text/css">
-           .login h1 a { background-image: url('.get_stylesheet_directory_uri().'/images/logo.gif) !important;
-        }
+           .login h1 a { background-image: url('.get_stylesheet_directory_uri().'/images/logo.gif) !important;}
     </style>';
 }
 add_action('login_head','my_login_logo');
 /* end logo code */
+
+function my_custom_login() {
+    echo '<style type="text/css">
+      body.login {
+      background-image: url('.plugin_dir_url(__FILE__).'images/login-bg.jpg) !important;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-position: center;
+    }
+  </style>';
+}
+add_action('login_head', 'my_custom_login');
+/* change logo url */
+function my_login_logo_url() {
+    return home_url();
+}
+add_filter( 'login_headerurl', 'my_login_logo_url' );
+/* logo url title on hover */
+function my_login_logo_url_title() {
+    return 'This is example.dev';
+}
+add_filter( 'login_headertitle', 'my_login_logo_url_title' );
 /**
  * Adds My_Widget_Example widget
  */
@@ -139,28 +160,4 @@ class My_Widget_Example extends WP_Widget {
   });
 
 
-  //another sample widget
-  class jpen_Example_Widget extends WP_Widget {
-    /**
-    * To create the example widget all four methods will be
-    * nested inside this single instance of the WP_Widget class.
-    **/
-    public function __construct() {
-      $widget_options = array(
-        'classname' => 'example_widget',
-        'description' => 'This is an Example Widget',
-      );
-      parent::__construct( 'example_widget', 'Example Widget', $widget_options );
-    }
-    public function form( $instance ) {
-      $title = ! empty( $instance['title'] ) ? $instance['title'] : ''; ?>
-      <p>
-        <label for="<?php echo $this->get_field_id( 'title' ); ?>">Title:</label>
-        <input type="text" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $title ); ?>" />
-      </p><?php
-    }
-  }
-  add_action( 'widgets_init', function() {
-      register_widget( 'jpen_Example_Widget' );
-  });
 ?>
